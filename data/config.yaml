@@ -1,0 +1,7 @@
+token: "5920068764:AAE2RI38yaCyxeX8G5YUh4SCbZhbMfSHJiI"
+host: "localhost"
+port: 5433
+user: "postgres"
+password: "InnopolisUniversity314"
+database: "contact_book"
+sslmode: "disable"
