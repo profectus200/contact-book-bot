@@ -6,7 +6,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/profectus200/contact-book-bot/internal/model/callbacks"
 	"github.com/profectus200/contact-book-bot/internal/model/messages"
-	"github.com/profectus200/contact-book-bot/internal/redis"
 	"log"
 )
 
@@ -28,16 +27,14 @@ type UpdateListenerWorker struct {
 	updateFetcher   updateFetcher
 	messageHandler  MessageHandler
 	callbackHandler CallbackHandler
-	cache           *redis.Cache
 }
 
 func NewUpdateListenerWorker(updateFetcher updateFetcher,
-	messageHandler MessageHandler, callbackHandler CallbackHandler, cache *redis.Cache) *UpdateListenerWorker {
+	messageHandler MessageHandler, callbackHandler CallbackHandler) *UpdateListenerWorker {
 	return &UpdateListenerWorker{
 		updateFetcher:   updateFetcher,
 		messageHandler:  messageHandler,
 		callbackHandler: callbackHandler,
-		cache:           cache,
 	}
 }
 
@@ -47,12 +44,10 @@ func (w *UpdateListenerWorker) Run(ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
-			w.cache.Close()
 			w.updateFetcher.Stop()
 			return
 		case update, ok := <-updates:
 			if !ok {
-				w.cache.Close()
 				w.updateFetcher.Stop()
 				return
 			}

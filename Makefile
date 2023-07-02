@@ -60,11 +60,5 @@ logs:
 tracing:
 	cd tracing && sudo docker compose up
 
-.PHONY: metrics
-metrics:
-	mkdir -p metrics/data
-	sudo chmod -R 777 metrics/data
-	cd metrics && sudo docker compose up
-
 docker-run:
 	sudo docker compose up

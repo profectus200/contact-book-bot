@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log"
 	"os"
 	"os/signal"
 
@@ -10,7 +11,6 @@ import (
 	"github.com/profectus200/contact-book-bot/internal/database"
 	"github.com/profectus200/contact-book-bot/internal/model/callbacks"
 	"github.com/profectus200/contact-book-bot/internal/model/messages"
-	"github.com/profectus200/contact-book-bot/internal/redis"
 	"github.com/profectus200/contact-book-bot/internal/worker"
 )
 
@@ -20,30 +20,26 @@ func main() {
 
 	config, err := config.New()
 	if err != nil {
-
+		log.Fatal("Cannot create config")
 	}
 
 	db, err := database.New(config)
 	if err != nil {
-
+		log.Fatal("Cannot create database")
 	}
 
-	cache, err := redis.New(config)
-	if err != nil {
-
-	}
-
-	contactsDB := database.NewContactsDB(db, cache)
+	contactsDB := database.NewContactsDB(db)
 	usersDB := database.NewUsersDB(db)
 
 	tgClient, err := tg.New(config)
 	if err != nil {
+		log.Fatal("Cannot create new tg-client")
 	}
 
 	msgModel := messages.New(tgClient, contactsDB, usersDB)
 	callbackModel := callbacks.New(tgClient, contactsDB, usersDB)
 
-	updateListenerWorker := worker.NewUpdateListenerWorker(tgClient, msgModel, callbackModel, cache)
+	updateListenerWorker := worker.NewUpdateListenerWorker(tgClient, msgModel, callbackModel)
 
 	updateListenerWorker.Run(ctx)
 }

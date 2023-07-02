@@ -84,7 +84,7 @@ func (s *Model) phoneEntered(ctx context.Context, msg *Message, userState types.
 		return errors.Wrap(err, "cannot ToWaitState")
 	}
 
-	return s.editContactAfterEditing(ctx, contact, msg.UserID, userState.ContactID)
+	return s.editContactAfterEditing(ctx, contact, msg.UserID, userState.MessageID)
 }
 
 func (s *Model) birthdayEntered(ctx context.Context, msg *Message, userState types.CurrentState) error {
@@ -125,7 +125,7 @@ func (s *Model) birthdayEntered(ctx context.Context, msg *Message, userState typ
 		return errors.Wrap(err, "cannot ToWaitState")
 	}
 
-	return s.editContactAfterEditing(ctx, contact, msg.UserID, userState.ContactID)
+	return s.editContactAfterEditing(ctx, contact, msg.UserID, userState.MessageID)
 }
 
 func (s *Model) descriptionEntered(ctx context.Context, msg *Message, userState types.CurrentState) error {
@@ -161,7 +161,7 @@ func (s *Model) descriptionEntered(ctx context.Context, msg *Message, userState 
 		return errors.Wrap(err, "cannot ToWaitState")
 	}
 
-	return s.editContactAfterEditing(ctx, contact, msg.UserID, userState.ContactID)
+	return s.editContactAfterEditing(ctx, contact, msg.UserID, userState.MessageID)
 }
 
 func (s *Model) initializeContact(ctx context.Context, msg *Message, contact *types.Contact) error {
@@ -270,8 +270,12 @@ func (s *Model) listContacts(ctx context.Context, userID int64) error {
 	}
 
 	text := ""
-	for _, contact := range contacts {
-		text += contact.ToString() + "-----------------------------\n"
+	if len(contacts) == 0 {
+		text = "You don't have any contacts saved yet!"
+	} else {
+		for _, contact := range contacts {
+			text += contact.ToString() + "-----------------------------\n"
+		}
 	}
 
 	return s.tgClient.SendMessage(text, userID)

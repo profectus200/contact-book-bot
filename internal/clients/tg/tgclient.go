@@ -71,6 +71,7 @@ func (c *Client) EditContactMessage(text string, userID int64, messageID int) er
 }
 
 func (c *Client) DoneMessage(userID int64, messageID int) error {
+
 	editMessage := tgbotapi.NewEditMessageText(userID, messageID, "Saved")
 	_, err := c.client.Send(editMessage)
 	if err != nil {

@@ -8,23 +8,13 @@ import (
 	"time"
 )
 
-type CacheModel interface {
-	Ping() error
-	Get(key string) ([]byte, error)
-	Set(key string, value []byte) error
-	Exists(key string) (bool, error)
-	Delete(key string) error
-}
-
 type contactsDB struct {
-	db    *sql.DB
-	cache CacheModel
+	db *sql.DB
 }
 
-func NewContactsDB(db *sql.DB, cache CacheModel) *contactsDB {
+func NewContactsDB(db *sql.DB) *contactsDB {
 	return &contactsDB{
-		db:    db,
-		cache: cache,
+		db: db,
 	}
 }
 
