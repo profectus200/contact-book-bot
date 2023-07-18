@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/profectus200/contact-book-bot/internal/types"
 	"golang.org/x/net/context"
@@ -19,6 +20,12 @@ func NewContactsDB(db *sql.DB) *contactsDB {
 }
 
 func (db *contactsDB) WriteContact(ctx context.Context, fromID int64, contact *types.Contact) error {
+	span, ctx := opentracing.StartSpanFromContext(
+		ctx,
+		"WriteContact",
+	)
+	defer span.Finish()
+
 	const query = `
 		INSERT INTO contacts(
 			tg_user_id,
@@ -48,6 +55,12 @@ func (db *contactsDB) WriteContact(ctx context.Context, fromID int64, contact *t
 }
 
 func (db *contactsDB) GetContact(ctx context.Context, userID int64, contactID int) (*types.Contact, error) {
+	span, ctx := opentracing.StartSpanFromContext(
+		ctx,
+		"GetContact",
+	)
+	defer span.Finish()
+
 	const query = `
 		SELECT 
 			name,
@@ -80,6 +93,12 @@ func (db *contactsDB) GetContact(ctx context.Context, userID int64, contactID in
 }
 
 func (db *contactsDB) GetAllContacts(ctx context.Context, userID int64) ([]*types.Contact, error) {
+	span, ctx := opentracing.StartSpanFromContext(
+		ctx,
+		"GetAllContacts",
+	)
+	defer span.Finish()
+
 	const query = `
 		SELECT 
 			contact_id,
@@ -116,6 +135,12 @@ func (db *contactsDB) GetAllContacts(ctx context.Context, userID int64) ([]*type
 }
 
 func (db *contactsDB) GetContactByName(ctx context.Context, userID int64, name string) ([]*types.Contact, error) {
+	span, ctx := opentracing.StartSpanFromContext(
+		ctx,
+		"GetContactByName",
+	)
+	defer span.Finish()
+
 	const query = `
 		SELECT 
 			contact_id,
@@ -149,6 +174,12 @@ func (db *contactsDB) GetContactByName(ctx context.Context, userID int64, name s
 }
 
 func (db *contactsDB) DeleteContact(ctx context.Context, userID int64, contactID int) error {
+	span, ctx := opentracing.StartSpanFromContext(
+		ctx,
+		"DeleteContact",
+	)
+	defer span.Finish()
+
 	const query = `
 		DELETE FROM
 			contacts
@@ -169,6 +200,12 @@ func (db *contactsDB) DeleteContact(ctx context.Context, userID int64, contactID
 }
 
 func (db *contactsDB) WriteName(ctx context.Context, name string, userID int64, contactID int) error {
+	span, ctx := opentracing.StartSpanFromContext(
+		ctx,
+		"WriteName",
+	)
+	defer span.Finish()
+
 	const query = `
 		UPDATE 
 			contacts
@@ -193,6 +230,12 @@ func (db *contactsDB) WriteName(ctx context.Context, name string, userID int64, 
 }
 
 func (db *contactsDB) WritePhone(ctx context.Context, phone string, userID int64, contactID int) error {
+	span, ctx := opentracing.StartSpanFromContext(
+		ctx,
+		"WritePhone",
+	)
+	defer span.Finish()
+
 	const query = `
 		UPDATE 
 			contacts
@@ -217,6 +260,12 @@ func (db *contactsDB) WritePhone(ctx context.Context, phone string, userID int64
 }
 
 func (db *contactsDB) WriteBirthday(ctx context.Context, birthday time.Time, userID int64, contactID int) error {
+	span, ctx := opentracing.StartSpanFromContext(
+		ctx,
+		"WriteBirthday",
+	)
+	defer span.Finish()
+
 	const query = `
 		UPDATE 
 			contacts
@@ -241,6 +290,12 @@ func (db *contactsDB) WriteBirthday(ctx context.Context, birthday time.Time, use
 }
 
 func (db *contactsDB) WriteDescription(ctx context.Context, description string, userID int64, contactID int) error {
+	span, ctx := opentracing.StartSpanFromContext(
+		ctx,
+		"WriteDescription",
+	)
+	defer span.Finish()
+
 	const query = `
 		UPDATE 
 			contacts

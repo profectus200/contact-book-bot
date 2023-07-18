@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
-	"log"
+	"github.com/profectus200/contact-book-bot/cmd/logging"
+	"github.com/profectus200/contact-book-bot/cmd/tracing"
+	"go.uber.org/zap"
 	"os"
 	"os/signal"
 
@@ -18,22 +20,28 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill)
 	defer cancel()
 
+	logger := logging.InitLogger()
+	tracing.InitTracing("actions_handler", logger)
+
+	logger.Info("Initializing config")
 	config, err := config.New()
 	if err != nil {
-		log.Fatal("Cannot create config")
+		logger.Fatal("Cannot create config", zap.Error(err))
 	}
 
+	logger.Info("Initializing database")
 	db, err := database.New(config)
 	if err != nil {
-		log.Fatal("Cannot create database")
+		logger.Fatal("Cannot create database", zap.Error(err))
 	}
 
 	contactsDB := database.NewContactsDB(db)
 	usersDB := database.NewUsersDB(db)
 
+	logger.Info("Initializing tg client")
 	tgClient, err := tg.New(config)
 	if err != nil {
-		log.Fatal("Cannot create new tg-client")
+		logger.Fatal("Cannot create new tg client", zap.Error(err))
 	}
 
 	msgModel := messages.New(tgClient, contactsDB, usersDB)

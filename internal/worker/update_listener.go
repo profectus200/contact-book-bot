@@ -3,6 +3,7 @@ package worker
 import (
 	"context"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/profectus200/contact-book-bot/internal/model/callbacks"
 	"github.com/profectus200/contact-book-bot/internal/model/messages"
@@ -60,6 +61,12 @@ func (w *UpdateListenerWorker) Run(ctx context.Context) {
 }
 
 func (w *UpdateListenerWorker) HandleUpdate(ctx context.Context, update tgbotapi.Update) error {
+	span, ctx := opentracing.StartSpanFromContext(
+		ctx,
+		"HandleUpdate",
+	)
+	defer span.Finish()
+
 	if update.Message != nil {
 		log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
 

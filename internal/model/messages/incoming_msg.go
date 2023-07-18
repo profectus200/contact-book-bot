@@ -2,6 +2,7 @@ package messages
 
 import (
 	"context"
+	"github.com/opentracing/opentracing-go"
 	"time"
 
 	"github.com/profectus200/contact-book-bot/internal/types"
@@ -57,6 +58,13 @@ const (
 )
 
 func (s *Model) IncomingMessage(ctx context.Context, msg *Message) error {
+	span, ctx := opentracing.StartSpanFromContext(
+		ctx,
+		"IncomingMessage",
+	)
+	span.SetTag("message", msg.Text)
+	defer span.Finish()
+
 	// Trying to recognize the command.
 	switch msg.Text {
 	case "/start":

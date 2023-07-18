@@ -3,11 +3,11 @@ package callbacks
 import (
 	"context"
 	"errors"
+	"github.com/opentracing/opentracing-go"
 	"github.com/profectus200/contact-book-bot/internal/types"
 )
 
 const (
-	// editContactKeyboard
 	ChangeContactName        string = "ChangeContactName"
 	ChangeContactPhone       string = "ChangeContactPhone"
 	ChangeContactBirthday    string = "ChangeContactBirthday"
@@ -55,6 +55,13 @@ type CallbackData struct {
 }
 
 func (s *Model) IncomingCallback(ctx context.Context, data *CallbackData) error {
+	span, ctx := opentracing.StartSpanFromContext(
+		ctx,
+		"IncomingCallback",
+	)
+	span.SetTag("callback", data.Data)
+	defer span.Finish()
+
 	switch data.Data {
 	case ChangeContactName:
 		return s.toWriteNameState(ctx, data)

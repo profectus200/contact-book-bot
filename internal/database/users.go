@@ -59,6 +59,11 @@ func (db *usersDB) SetCurrentState(ctx context.Context, userID int64, state type
 }
 
 func (db *usersDB) GetCurrentState(ctx context.Context, userID int64) (*types.UserStateType, bool) {
+	span, ctx := opentracing.StartSpanFromContext(
+		ctx,
+		"GetCurrentState",
+	)
+	defer span.Finish()
 
 	const query = `
 		SELECT
